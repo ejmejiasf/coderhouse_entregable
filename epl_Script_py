@@ -1,0 +1,75 @@
+import requests
+import psycopg2
+import json
+
+# Configuración de la API y la base de datos
+api_key = '66f79342272442de8b7847f3e111e12b'
+url = 'https://api.football-data.org/v2/competitions/PL/matches'
+
+headers = {
+    'X-Auth-Token': api_key
+}
+
+db_host = 'data-engineer-cluster.cyhh5bfevlmn.us-east-1.redshift.amazonaws.com'
+db_port = '5439'
+db_name = 'data-engineer-database'
+db_user = 'ejmejiasf_coderhouse'
+db_password = 'pAjkuk033c'
+
+# Función para extraer datos de la API
+def extract_data():
+    response = requests.get(url, headers=headers)
+    data = response.json()
+    return data
+
+# Función para transformar los datos
+def transform_data(data):
+    transformed_data = []
+    for match in data['matches']:
+        transformed_data.append({
+            'match_id': match['id'],
+            'season': match['season']['startDate'] + ' to ' + match['season']['endDate'],
+            'home_team': match['homeTeam']['name'],
+            'away_team': match['awayTeam']['name'],
+            'score': str(match['score']['fullTime']['homeTeam']) + '-' + str(match['score']['fullTime']['awayTeam'])
+        })
+    return transformed_data
+
+# Función para cargar los datos en Redshift
+def load_data(data):
+    conn = psycopg2.connect(
+        host=db_host,
+        port=db_port,
+        dbname=db_name,
+        user=db_user,
+        password=db_password
+    )
+    cur = conn.cursor()
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS football_matches (
+            match_id INT PRIMARY KEY,
+            season VARCHAR(50),
+            home_team VARCHAR(50),
+            away_team VARCHAR(50),
+            score VARCHAR(10)
+        );
+    ''')
+    for match in data:
+        cur.execute('''
+            INSERT INTO football_matches (match_id, season, home_team, away_team, score)
+            VALUES (%s, %s, %s, %s, %s)
+            ON CONFLICT (match_id) DO NOTHING;
+        ''', (match['match_id'], match['season'], match['home_team'], match['away_team'], match['score']))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+# Proceso ETL
+def etl_process():
+    raw_data = extract_data()
+    transformed_data = transform_data(raw_data)
+    load_data(transformed_data)
+
+if __name__ == '__main__':
+    etl_process()
+
