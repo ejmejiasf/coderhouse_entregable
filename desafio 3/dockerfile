@@ -1,0 +1,17 @@
+# Usa una imagen base de Python
+FROM python:3.12.2-slim
+
+# Establece el directorio de trabajo en el contenedor
+WORKDIR /app
+
+# Copia el archivo de dependencias al contenedor
+COPY requirements.txt .
+
+# Instala las dependencias necesarias
+RUN pip install -r requirements.txt
+
+# Copia el script Python al contenedor
+COPY Main.py .
+
+# Comando por defecto para ejecutar el script
+CMD ["python", "Main.py"]
