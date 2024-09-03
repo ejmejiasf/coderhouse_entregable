@@ -16,11 +16,11 @@ df.dropna(inplace=True)
 df['main.temp'] = df['main.temp'].astype(float)
 
 # Configuración de conexión a Redshift
-host = 'tu_host_redshift'
-dbname = 'tu_nombre_base_datos'
+host = 'data-engineer-cluster.cyhh5bfevlmn.us-east-1.redshift.amazonaws.com'
+port = '5439'
+dbname = 'data-engineer-database'
 user = 'ejmejiasf_coderhouse'
 password = 'pAjkuk033c'
-port = '5439'
 
 try:
     conn = psycopg2.connect(
