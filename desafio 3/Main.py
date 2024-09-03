@@ -6,6 +6,7 @@ from psycopg2.extras import execute_values
 
 # Paso 1: Extrayendo de Datos desde la API
 url = 'https://api.football-data.org/v2/competitions/PL/matches'
+api_key = '66f79342272442de8b7847f3e111e12b'
 response = requests.get(url)
 data = response.json()
 
