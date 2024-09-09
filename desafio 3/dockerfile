@@ -7,11 +7,14 @@ WORKDIR /app
 # Copia el archivo de dependencias al contenedor
 COPY requirements.txt .
 
-# Instala las dependencias necesarias
-RUN pip install -r requirements.txt
+# Instala las dependencias necesarias, incluyendo Apache Airflow
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copia los DAGs al contenedor
+COPY dags/ /opt/airflow/dags/
 
 # Copia el script Python al contenedor
 COPY Main.py .
 
-# Comando por defecto para ejecutar el script
-CMD ["python", "Main.py"]
+# Comando por defecto para ejecutar el servidor web de Airflow
+CMD ["airflow", "webserver"]
