@@ -4,17 +4,25 @@ import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values
 
-# Paso 1: Extrayendo de Datos desde la API
+# Paso 1: Extrayendo Datos desde la API
 url = 'https://api.football-data.org/v2/competitions/PL/matches'
 api_key = '66f79342272442de8b7847f3e111e12b'
-response = requests.get(url)
-data = response.json()
+headers = {'X-Auth-Token': api_key}
+response = requests.get(url, headers=headers)
+
+if response.status_code == 200:
+    data = response.json()
+else:
+    print("Error fetching data from API")
+    data = {}
 
 # Paso 2: Transformación de Datos con Pandas
-df = pd.json_normalize(data)
+matches = data.get('matches', [])
+df = pd.json_normalize(matches)
+
+# Limpieza de datos
 df.drop_duplicates(inplace=True)
 df.dropna(inplace=True)
-df['main.temp'] = df['main.temp'].astype(float)
 
 # Configuración de conexión a Redshift
 host = 'data-engineer-cluster.cyhh5bfevlmn.us-east-1.redshift.amazonaws.com'
@@ -35,13 +43,18 @@ try:
 except Exception as e:
     print("Unable to connect to Redshift.")
     print(e)
+    conn = None
 
 # Función para cargar los datos
 def cargar_en_redshift(conn, table_name, dataframe):
+    if conn is None:
+        print("No connection to Redshift.")
+        return
+
     dtypes = dataframe.dtypes
     cols = list(dtypes.index)
     tipos = list(dtypes.values)
-    type_map = {'int64': 'INT', 'float64': 'FLOAT', 'object': 'VARCHAR(50)'}
+    type_map = {'int64': 'INT', 'float64': 'FLOAT', 'object': 'VARCHAR(255)'}
     sql_dtypes = [type_map[str(dtype)] for dtype in tipos]
     
     # Definir formato SQL VARIABLE TIPO_DATO
@@ -72,6 +85,7 @@ def cargar_en_redshift(conn, table_name, dataframe):
     cur.close()
 
 # Carga de datos en RedShift
-cargar_en_redshift(conn=conn, table_name='mi_tabla', dataframe=df)
+cargar_en_redshift(conn=conn, table_name='football_matches', dataframe=df)
 
-conn.close()
+if conn:
+    conn.close()
