@@ -4,9 +4,17 @@ import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values
 
+# Configuración de conexión a Redshift
+api_key = os.getenv('FOOTBALL_API_KEY')
+host = os.getenv('REDSHIFT_URL')
+port = os.getenv('REDSHIFT_PORT')
+dbname = os.getenv('REDSHIFT_DB')
+user = os.getenv('REDSHIFT_USER')
+password = os.getenv('REDSHIFT_PWD')
+
 # Paso 1: Extrayendo Datos desde la API
 url = 'https://api.football-data.org/v2/competitions/PL/matches'
-headers = {'X-Auth-Token': '66f79342272442de8b7847f3e111e12b'}
+headers = {'X-Auth-Token': api_key}
 response = requests.get(url, headers=headers)
 
 if response.status_code == 200:
@@ -22,13 +30,6 @@ df = pd.json_normalize(matches)
 # Limpieza de datos
 df.drop_duplicates(inplace=True)
 df.dropna(inplace=True)
-
-# Configuración de conexión a Redshift
-host = 'data-engineer-cluster.cyhh5bfevlmn.us-east-1.redshift.amazonaws.com'
-port = '5439'
-dbname = 'data-engineer-database'
-user = 'ejmejiasf_coderhouse'
-password = 'pAjkuk033c'
 
 try:
     conn = psycopg2.connect(
