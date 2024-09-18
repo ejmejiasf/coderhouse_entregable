@@ -1,22 +1,16 @@
-DROP TABLE if exist ejmejiasf_coderhouse ;
+-- Crear un esquema para organizar las tablas relacionadas con datos de fútbol
+CREATE SCHEMA IF NOT EXISTS ejmejiasf_coderhouse;
 
-CREATE TABLE ejmejiasf_coderhouse.match_details(
-    mining_algo VARCHAR(200),
-    network_hash_rate VARCHAR(200),
-    available_on_nicehash_percent NUMERIC,
-    one_hour_attack_cost NUMERIC,
-    twenty_four_hours_attack_cost NUMERIC,
-    attack_appeal NUMERIC,
-    hash_rate NUMERIC,
-    hash_rate_30d_average NUMERIC,
-    mining_revenue_per_hash_usd NUMERIC,
-    mining_revenue_per_hash_native_units NUMERIC,
-    mining_revenue_per_hash_per_second_usd NUMERIC,
-    mining_revenue_per_hash_per_second_native_units NUMERIC,
-    mining_revenue_from_fees_percent_last_24_hours NUMERIC,
-    mining_revenue_native NUMERIC,
-    mining_revenue_usd NUMERIC,
-    mining_revenue_total NUMERIC,
-    average_difficulty NUMERIC,
-    date TIMESTAMP
+-- Crear una tabla para almacenar información sobre los partidos de fútbol
+CREATE TABLE ejmejiasf_coderhouse.match_details (
+    id SERIAL PRIMARY KEY,  -- Identificador único para cada entrada
+    partido_id INTEGER NOT NULL,  -- ID del partido proporcionado por la API
+    temporada VARCHAR(9) NOT NULL,  -- Año de inicio y fin de la temporada en formato "YYYY-YYYY"
+    fecha_partido TIMESTAMP NOT NULL,  -- Fecha y hora del partido
+    estado_partido VARCHAR(50),  -- Estado actual del partido (ej. programado, finalizado)
+    nombre_equipo_local VARCHAR(150),  -- Nombre del equipo que juega en casa
+    nombre_equipo_visitante VARCHAR(150),  -- Nombre del equipo visitante
+    puntaje_equipo_local SMALLINT,  -- Puntaje final del equipo local
+    puntaje_equipo_visitante SMALLINT,  -- Puntaje final del equipo visitante
+    nombre_competencia VARCHAR(150)  -- Nombre de la competencia o liga
 );
