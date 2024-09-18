@@ -1,8 +1,3 @@
--- DROP DATABASE IF EXISTS football_analysis;
-
--- CREATE DATABASE football_analysis;
-
--- Crear un esquema para organizar tus tablas
 CREATE SCHEMA IF NOT EXISTS soccer_data_schema;
 
 -- Crear la tabla para almacenar datos de los partidos
