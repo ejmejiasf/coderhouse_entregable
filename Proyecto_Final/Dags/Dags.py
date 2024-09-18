@@ -12,7 +12,7 @@ from psycopg2.extras import execute_values
 def download_and_load_football_data():
     # Configuración de la API de fútbol
     api_key = '66f79342272442de8b7847f3e111e12b'
-    url = 'https://api.football-data.org/v2/competitions/PL/matches'
+    url = 'https://api.football-data.org/v4/matches'
     headers = {'X-Auth-Token': api_key}
 
     # Realizar la solicitud a la API
