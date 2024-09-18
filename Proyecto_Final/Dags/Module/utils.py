@@ -24,7 +24,7 @@ def obtener_credenciales() -> dict:
 def argumentos_defecto_airflow():
     """Proporciona los argumentos por defecto para los DAGs de Airflow."""
     return {
-        "owner": "usuario_default",
+        "owner": "ejmejias",
         "depends_on_past": False,
         "start_date": datetime.now(),
         "email_on_failure": True,
