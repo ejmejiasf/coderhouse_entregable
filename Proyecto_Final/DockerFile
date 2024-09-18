@@ -1,0 +1,20 @@
+# Usa una imagen base de Python
+FROM python:3.12.2-slim
+
+# Establece el directorio de trabajo en el contenedor
+WORKDIR /app
+
+# Copia el archivo de dependencias al contenedor
+COPY requirements.txt .
+
+# Instala las dependencias necesarias, incluyendo Apache Airflow
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copia los DAGs al contenedor
+COPY dags/ /opt/airflow/dags/
+
+# Copia el script Python al contenedor
+COPY Main.py .
+
+# Comando por defecto para ejecutar el servidor web de Airflow
+CMD ["airflow", "webserver"]
