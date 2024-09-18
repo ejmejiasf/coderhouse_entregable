@@ -5,9 +5,8 @@ import psycopg2
 from psycopg2.extras import execute_values
 
 # Paso 1: Extrayendo Datos desde la API
-url = 'https://api.football-data.org/v4/matches'
-api_key = '66f79342272442de8b7847f3e111e12b'
-headers = {'X-Auth-Token': api_key}
+url = 'https://api.football-data.org/v2/competitions/PL/matches'
+headers = {'X-Auth-Token': '66f79342272442de8b7847f3e111e12b'}
 response = requests.get(url, headers=headers)
 
 if response.status_code == 200:
